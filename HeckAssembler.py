@@ -1,4 +1,5 @@
-## written by Guy Soudri and Hezki Raff.
+## written by elitali94 and yechezker
+
 import sys
 import os
 from os.path import isfile, join
@@ -38,4 +39,59 @@ symbolTable = {"R0": "0000000000000000", "R1": "0000000000000001", "R2": "000000
     , "SCREEN": "0100000000000000", "KBD": "110000000000000", "SP": "0000000000000000", "LCL": "0000000000000001",
                "ARG": "0000000000000010", "THIS": "0000000000000011", "THAT": "0000000000000100"
                }
+lableTable={}
 
+
+
+# get name of file, open him and return list with his lines - except empty lines and lines that start whit /
+def parser(fileName):pass#TODO ELITAL
+    assemblerFile = open(fileName, "r")
+    lines = []
+    #
+    #
+    #
+    return lines
+
+
+#gets list of line without empty line and lines that start whit /, and return list of line
+#without labels (without @i, @loop, (LOOP). but with @R5, @KBD...instead of @i, put @16,@17,...and delete "(LABLE)".
+#instructions for elital:
+# put all "(LABLE)" in lableTable (dictionary) as key and the value is the num of line. also put in this dictionary
+# @i as a key and value is 16...
+def deleteLabels(lines):pass #TODO ELITAL
+    linesWhithOutLabels=[0]
+    #
+    #
+    #
+    return linesWhithOutLabels
+
+#gets lins with assembly code - without empty lines, / lines, labels, and make replacing simbols as @R5 by @5
+def deleteSimbols(lines)pass:#TODO ELITAL
+    finish = []
+    #
+    #
+    #
+    return finish
+
+def finishTranslate(lines)pass:#TODO hezki
+
+
+def __main__():
+    input = sys.argv[1]
+    if os.path.isfile(input):
+        lines = parser(input)
+        lines = deleteLabels(lines)
+        lines = deleteSimbols(lines)
+        finishTranslate(lines, os.path.splitext(input)[0] + ".hack")
+    else:
+        for file in [f for f in os.listdir(input) if isfile(join(input, f))]:
+            if os.path.splitext(file)[1] == ".asm":
+                lines = parser(join(input, file))
+                lines = deleteLabels(lines)
+                lines = deleteSimbols(lines)
+                finishTranslate(lines, os.path.splitext(join(input, file))[0] + ".hack")
+
+
+
+if __name__ == "__main__":
+    __main__()
