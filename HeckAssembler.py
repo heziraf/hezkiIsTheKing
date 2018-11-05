@@ -7,8 +7,6 @@
 ############################################################
 import sys
 import os
-from os.path import isfile, join
-
 ############################################################
 # Constants
 ############################################################
@@ -28,24 +26,24 @@ ASM_SUFFIX= ".asm"
 ############################################################
 list_of_asm_lines = []
 dictionary_new_symbol_label = {}
-dictionary_known_symbol = {"R0": "0000000000000000", "R1": "0000000000000001", "R2": "0000000000000010",
-                           "R3": "0000000000000011", "R4": "0000000000000100", "R5": "0000000000000101",
-                           "R6": "0000000000000110", "R7": "0000000000000111", "R8": "0000000000001000",
-                           "R9": "0000000000001001", "R10": "0000000000001010", "R11": "0000000000001011",
-                           "R12": "0000000000001100", "R13": "0000000000001101", "R14": "0000000000001110",
-                           "R15": "0000000000001111", "SCREEN": "0100000000000000", "KBD": "110000000000000",
-                           "SP": "0000000000000000", "LCL": "0000000000000001", "ARG": "0000000000000010",
-                           "THIS": "0000000000000011", "THAT": "0000000000000100"}
+dictionary_known_symbol = {"R0": "0000000000000000",     "R1": "0000000000000001",  "R2": "0000000000000010",
+                           "R3": "0000000000000011",     "R4": "0000000000000100",  "R5": "0000000000000101",
+                           "R6": "0000000000000110",     "R7": "0000000000000111",  "R8": "0000000000001000",
+                           "R9": "0000000000001001",    "R10": "0000000000001010", "R11": "0000000000001011",
+                          "R12": "0000000000001100",    "R13": "0000000000001101", "R14": "0000000000001110",
+                          "R15": "0000000000001111", "SCREEN": "0100000000000000", "KBD": "0110000000000000",
+                           "SP": "0000000000000000",    "LCL": "0000000000000001", "ARG": "0000000000000010",
+                         "THIS": "0000000000000011",   "THAT": "0000000000000100"}
 
-dictionary_compare = {"0": "1110101010", "1": "1110111111", "-1": "1110111010", "D": "1110001100",
-                      "A": "1110110000", "!D": "1110001101", "!A": "1110110001", "-D": "1110001111",
-                      "-A": "1110110011", "D+1": "1110011111", "A+1": "1110110111", "D-1": "1110001110",
-                      "A-1": "1110110010", "D+A": "1110000010", "D-A": "1110010011", "A-D": "1110000111",
-                      "D&A": "1110000000", "D|A": "1110010101", "M": "1111110000", "!M": "1111110001",
-                      "-M": "1111110011", "M+1": "1111110111", "M-1": "1111110010", "D+M": "1111000010",
-                      "M+D": "1111000010", "D-M": "1111010011", "M-D": "1111000111", "D&M": "1111000000",
-                      "D|M": "1111010101", "A>>": "1010000000", "M>>": "1011000000", "D<<": "1010110000",
-                      "D>>": "1010010000", "M<<": "1011100000", "A<<": "1010100000"}
+dictionary_compare = {"0": "1110101010",   "1": "1110111111", "-1":  "1110111010",   "D": "1110001100",
+                      "A": "1110110000",  "!D": "1110001101", "!A":  "1110110001",  "-D": "1110001111",
+                     "-A": "1110110011", "D+1": "1110011111", "A+1": "1110110111", "D-1": "1110001110",
+                    "A-1": "1110110010", "D+A": "1110000010", "D-A": "1110010011", "A-D": "1110000111",
+                    "D&A": "1110000000", "D|A": "1110010101",   "M": "1111110000",  "!M": "1111110001",
+                     "-M": "1111110011", "M+1": "1111110111", "M-1": "1111110010", "D+M": "1111000010",
+                    "M+D": "1111000010", "D-M": "1111010011", "M-D": "1111000111", "D&M": "1111000000",
+                    "D|M": "1111010101", "A>>": "1010000000", "M>>": "1011000000", "D<<": "1010110000",
+                    "D>>": "1010010000", "M<<": "1011100000", "A<<": "1010100000"}
 
 dictionary_destination = {"0": "000", "M": "001", "D": "010", "MD": "011", "A": "100", "AM": "101", "AD": "110",
                           "AMD": "111"}
@@ -138,15 +136,13 @@ def c_instruction_to_binary():
                     fix_line = dictionary_compare[line[equal_index + 1:index]] + dictionary_destination[
                         line[:equal_index]] + dictionary_jump[line[index + 1:]]
                 else:
-                    fix_line = dictionary_compare[line[equal_index + 1:]] + dictionary_destination[
-                        line[:equal_index]] + "000"
+                    fix_line = dictionary_compare[line[equal_index + 1:]] + dictionary_destination[line[:equal_index]] + "000"
             else:
                 if ";" in line:
                     index = line.index(";")
-                    fix_line = dictionary_compare[line[:index]] + "000" + dictionary_jump[line[index + 1:]]
+                    fix_line = dictionary_compare[line[:index]] + "000" +dictionary_jump[line[index + 1:]]
                 else:
                     fix_line = dictionary_compare[line] + "000000"
-
             index = list_of_asm_lines.index(line)
             list_of_asm_lines[index] = str(fix_line)
 
@@ -163,7 +159,8 @@ def writing_to_a_file(input_file):
             if i == len(list_of_asm_lines) - 1:
                 end = ""
             file_lines.write(list_of_asm_lines[i] + end)
-    list_of_asm_lines.clear()
+    if len(list_of_asm_lines) != 0:
+        del list_of_asm_lines[:]
 
 
 def from_asm_to_list(input_file):
@@ -178,7 +175,7 @@ def from_asm_to_list(input_file):
             line = line.replace(SPACE, "")
             if line.startswith(COMMENT):
                 continue
-            elif not line or line == ENTER or line == SPACE:
+            elif not line or line == ENTER or line == SPACE or line=="\r":
                 continue
             elif line.startswith(START_BRACKET):
                 label = line[line.find(START_BRACKET) + 1:line.find(END_BRACKET)]
@@ -186,8 +183,10 @@ def from_asm_to_list(input_file):
                 dictionary_new_symbol_label[label] = str(label_value)
                 continue
             else:
-                split_line = line.split(ENTER)[FIRST_PLACE]
-                list_of_asm_lines.append(split_line)
+                line_with_no_enter = line.split(ENTER)[FIRST_PLACE]
+                split_line = line_with_no_enter.replace("\r","")
+                if not (split_line == ""):
+                    list_of_asm_lines.append(split_line)
 
 
 def from_asm_to_hack(input_file):
@@ -202,6 +201,7 @@ def from_asm_to_hack(input_file):
         list_without_symbol()
         list_without_comments()
         decimal_to_binary()
+        #print(list_of_asm_lines)
         c_instruction_to_binary()
         writing_to_a_file(os.path.splitext(input_file)[FIRST_PLACE] + HACK_SUFFIX)
 
@@ -216,6 +216,7 @@ def __main__():
             from_asm_to_hack(input_file+file)
     else:
         return
+
 
 if __name__ == "__main__":
     __main__()
